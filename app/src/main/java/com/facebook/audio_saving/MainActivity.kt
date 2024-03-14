@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         // Set click listener for the button
         uploadButton.setOnClickListener {
-            // Open file picker to select audio file
+            // This is for Open file picker to select audio file
             val intent = Intent()
             intent.type = "audio/*"
             intent.action = Intent.ACTION_GET_CONTENT
@@ -39,10 +39,12 @@ class MainActivity : AppCompatActivity() {
 
         // Set click listener for the getDataButton
         getDataButton.setOnClickListener {
-            // Fetch and display the names of saved audio files
-            fetchAudioNames()
+            // Fetch and display the url names of saved audio files
+            fetchAudioUrls()
         }
     }
+
+    //This is for getting the audio file's url..
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -54,6 +56,8 @@ class MainActivity : AppCompatActivity() {
             uploadAudio(audioUri)
         }
     }
+
+    //Updating Data To Firebase..
 
     private fun uploadAudio(audioUri: Uri) {
         val storageRef = storage.reference
@@ -69,7 +73,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchAudioNames() {
+    //Fetching URl Data From Firebase..
+
+    private fun fetchAudioUrls() {
         val storageRef = storage.reference.child("audio")
 
         // List all items in the "audio" folder
@@ -78,14 +84,20 @@ class MainActivity : AppCompatActivity() {
                 // Get URLs of all audio files and display them in the TextView
                 val urls = mutableListOf<String>()
                 for (item in listResult.items) {
-                    urls.add(item.name)
+                    item.downloadUrl.addOnSuccessListener { uri ->
+                        urls.add(uri.toString())
+                        fetchedDataTextView.text = urls.joinToString("\n")
+                    }.addOnFailureListener { exception ->
+                        // Handle any errors
+                        Toast.makeText(this, "Failed to fetch audio URLs: ${exception.message}", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                fetchedDataTextView.text = urls.joinToString("\n")
             }
             .addOnFailureListener { exception ->
                 // Handle unsuccessful fetch
                 Toast.makeText(this, "Failed to fetch audio names: ${exception.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 
 }
