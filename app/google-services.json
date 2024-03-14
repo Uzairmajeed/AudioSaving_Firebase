@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "825765742531",
+    "project_id": "audio-saving",
+    "storage_bucket": "audio-saving.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825765742531:android:7069fcd2d6ff49f3521f76",
+        "android_client_info": {
+          "package_name": "com.facebook.audio_saving"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgj7YmTMlUBOc93qHDd81vjOsxs_p06zY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
