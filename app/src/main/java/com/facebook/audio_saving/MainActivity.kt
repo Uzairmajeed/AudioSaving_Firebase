@@ -8,27 +8,33 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
     private lateinit var uploadButton: Button
     private lateinit var getDataButton: Button
     private lateinit var fetchedDataTextView: TextView
+    private lateinit var fetchedFromRealtimeTextView: TextView
     private lateinit var storage: FirebaseStorage
+    private lateinit var database: DatabaseReference
     private val PICK_AUDIO_REQUEST = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize Firebase Storage
+        // Initialize Firebase Storage and Realtime Database
         storage = FirebaseStorage.getInstance()
+        database = FirebaseDatabase.getInstance().reference
 
-        // Find the button by ID
+        // Find the buttons and TextViews by ID
         uploadButton = findViewById(R.id.uploadbutton)
         getDataButton = findViewById(R.id.getDataButton)
         fetchedDataTextView = findViewById(R.id.fetchedDataTextView)
+        fetchedFromRealtimeTextView = findViewById(R.id.fetchedFromRealtime)
 
-        // Set click listener for the button
+        // Set click listener for the uploadButton
         uploadButton.setOnClickListener {
             // This is for Open file picker to select audio file
             val intent = Intent()
@@ -42,10 +48,19 @@ class MainActivity : AppCompatActivity() {
             // Fetch and display the url names of saved audio files
             fetchAudioUrls()
         }
+
+        // Set click listener for the savetorealtime button
+        val savetorealtimeButton: Button = findViewById(R.id.savetorealtime)
+        savetorealtimeButton.setOnClickListener {
+            saveToFbRealtimeDatabase()
+
+            // Fetch data from Realtime Database on startup
+            fetchFromFbRealtimeDatabase()
+        }
+
     }
 
-    //This is for getting the audio file's url..
-
+    // This is for getting the audio file's url..
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_AUDIO_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
@@ -57,8 +72,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //Updating Data To Firebase..
-
+    // Upload audio file to Firebase Storage
     private fun uploadAudio(audioUri: Uri) {
         val storageRef = storage.reference
         val audioRef = storageRef.child("audio/${System.currentTimeMillis()}.mp3") // Generate a unique filename
@@ -73,8 +87,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //Fetching URl Data From Firebase..
-
+    // Fetch URLs of audio files from Firebase Storage
     private fun fetchAudioUrls() {
         val storageRef = storage.reference.child("audio")
 
@@ -99,5 +112,34 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    // Save fetched URL to Firebase Realtime Database
+    private fun saveToFbRealtimeDatabase() {
+        val fetchedUrl = fetchedDataTextView.text.toString().trim()
+        if (fetchedUrl.isNotEmpty()) {
+            val key = database.child("audioUrls").push().key ?: ""
+            database.child("audioUrls").child(key).setValue(fetchedUrl)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "URL saved to Realtime Database", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(this, "Failed to save URL: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(this, "No URL to save", Toast.LENGTH_SHORT).show()
+        }
+    }
 
+    // Fetch data from Firebase Realtime Database
+    private fun fetchFromFbRealtimeDatabase() {
+        database.child("audioUrls").limitToLast(1).get()
+            .addOnSuccessListener { snapshot ->
+                for (childSnapshot in snapshot.children) {
+                    val fetchedUrl = childSnapshot.value.toString()
+                    fetchedFromRealtimeTextView.text = fetchedUrl
+                }
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, "Failed to fetch URL from Realtime Database: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 }

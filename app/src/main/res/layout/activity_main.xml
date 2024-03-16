@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,36 +11,54 @@
         android:id="@+id/uploadbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:text="Choose Audio From Downloads"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/getDataButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get Data"
-        app:layout_constraintTop_toBottomOf="@id/uploadbutton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        android:text="Get Data"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/uploadbutton" />
 
     <TextView
         android:id="@+id/fetchedDataTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Fetched Data"
         android:textIsSelectable="true"
-        app:layout_constraintTop_toBottomOf="@id/getDataButton"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/getDataButton"
+        app:layout_constraintStart_toStartOf="@id/getDataButton"
+        app:layout_constraintTop_toBottomOf="@id/getDataButton" />
+
+    <Button
+        android:id="@+id/savetorealtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Save and Fetch From Realtime.."
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fetchedDataTextView" />
+
+
+    <TextView
+        android:id="@+id/fetchedFromRealtime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="15dp"/>
+        android:text="Fetched Data From Realtime"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toEndOf="@id/savetorealtime"
+        app:layout_constraintStart_toStartOf="@id/savetorealtime"
+        app:layout_constraintTop_toBottomOf="@id/savetorealtime" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
